@@ -183,7 +183,7 @@ function tickSnake(){
     if(head.x<0||head.x>=SG||head.y<0||head.y>=SG||snake.some(s=>s.x===head.x&&s.y===head.y)){clearInterval(sInt);snakeRunning=false;document.getElementById('snakeStartBtn').textContent='Play Again';return;}
     snake.unshift(head);if(head.x===food.x&&head.y===food.y){sScore+=10;document.getElementById('snake-score').textContent=sScore;spawnFood();}else snake.pop();drawSnake();
 }
-function startSnake(){if(!snakeInit)initSnakeGame();snake=[{x:10,y:10}];dir={x:1,y:0};sScore=0;document.getElementById('snake-score').textContent='0';document.getElementById('snakeStartBtn').textContent='Restart';snakeRunning=true;spawnFood();drawSnake();clearInterval(sInt);sInt=setInterval(tickSnake,150);}
+function startSnake(){if(!snakeInit)initSnakeGame();snake=[{x:10,y:10}];dir={x:1,y:0};sScore=0;document.getElementById('snake-score').textContent='0';document.getElementById('snakeStartBtn').textContent='Restart';snakeRunning=true;spawnFood();drawSnake();clearInterval(sInt);sInt=setInterval(tickSnake,250);}
 function snakeMove(d){if(!snakeRunning)return;if(d==='up'&&dir.y!==1)dir={x:0,y:-1};else if(d==='down'&&dir.y!==-1)dir={x:0,y:1};else if(d==='left'&&dir.x!==1)dir={x:-1,y:0};else if(d==='right'&&dir.x!==-1)dir={x:1,y:0};}
 
 /* Keyboard */
