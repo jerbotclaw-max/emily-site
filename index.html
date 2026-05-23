@@ -20,13 +20,8 @@
         .subtitle { color: #888; font-size: 1.1em; margin-bottom: 2em; text-align: center; }
         .nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 2em; flex-wrap: wrap; }
         .nav a {
-            text-decoration: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            background: #f0e6ff;
-            color: #6b3fa0;
-            font-weight: 500;
-            font-size: 0.95em;
+            text-decoration: none; padding: 8px 18px; border-radius: 20px;
+            background: #f0e6ff; color: #6b3fa0; font-weight: 500; font-size: 0.95em;
         }
         .nav a:hover { background: #e0d0f5; }
         .section { margin-bottom: 2em; }
@@ -47,13 +42,11 @@
         .game-btn:hover { background: #8a5fc0; }
         .controls-hint { margin-top: 8px; color: #888; font-size: 0.85em; }
         .touch-controls {
-            margin-top: 16px;
-            display: grid;
+            margin-top: 16px; display: grid;
             grid-template-areas: ". up ." "left down right";
             grid-template-columns: 60px 60px 60px;
             grid-template-rows: 56px 56px;
-            gap: 6px;
-            justify-content: center;
+            gap: 6px; justify-content: center;
         }
         .touch-btn {
             font-size: 1.6em; border: none; border-radius: 14px;
@@ -68,30 +61,20 @@
         .touch-btn.right { grid-area: right; }
 
         /* Tic Tac Toe */
-        .ttt-board {
-            display: inline-grid;
-            grid-template-columns: repeat(3, 80px);
-            grid-template-rows: repeat(3, 80px);
-            gap: 6px;
-        }
+        .ttt-board { display: inline-grid; grid-template-columns: repeat(3,80px); grid-template-rows: repeat(3,80px); gap: 6px; }
         .ttt-cell {
-            width: 80px; height: 80px;
-            background: #fff;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            font-size: 2.5em;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b3fa0;
+            width: 80px; height: 80px; background: #fff; border: 2px solid #ddd;
+            border-radius: 12px; font-size: 2.5em; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; color: #6b3fa0;
             -webkit-tap-highlight-color: transparent;
         }
         .ttt-cell:hover { background: #f5f0ff; }
         .ttt-cell.x { color: #f00060; }
         .ttt-cell.o { color: #00b8b8; }
         .ttt-turn { margin-top: 12px; font-size: 1.2em; }
+
+        /* Maze */
+        #maze-canvas { border: 2px solid #444; border-radius: 4px; display: inline-block; }
 
         footer { margin-top: 3em; color: #aaa; font-size: 0.85em; text-align: center; }
     </style>
@@ -104,6 +87,7 @@
         <a href="#" onclick="showPage('tetris')">🎮 Tetris</a>
         <a href="#" onclick="showPage('snake')">🐍 Snake</a>
         <a href="#" onclick="showPage('ttt')">❌ Tic Tac Toe</a>
+        <a href="#" onclick="showPage('maze')">🏰 Maze</a>
     </div>
 
     <div id="page-home" class="page active">
@@ -162,6 +146,20 @@
         </div>
     </div>
 
+    <div id="page-maze" class="page">
+        <div class="game-wrap">
+            <canvas id="maze-canvas" width="300" height="300"></canvas>
+            <div class="game-info" id="maze-info">Find the exit! 🏁</div>
+            <button class="game-btn" onclick="mazeReset()">New Maze</button>
+            <div class="touch-controls">
+                <button class="touch-btn up" ontouchstart="mazeMove(0,-1);event.preventDefault();">↑</button>
+                <button class="touch-btn left" ontouchstart="mazeMove(-1,0);event.preventDefault();">←</button>
+                <button class="touch-btn down" ontouchstart="mazeMove(0,1);event.preventDefault();">↓</button>
+                <button class="touch-btn right" ontouchstart="mazeMove(1,0);event.preventDefault();">→</button>
+            </div>
+        </div>
+    </div>
+
     <footer>Built with 💜 by Emily</footer>
 
 <script>
@@ -171,6 +169,7 @@ function showPage(id){
     if(id==='tetris'){if(!tetrisInit)initTetris();if(!tetrisRunning)startGame();}
     if(id==='snake'){if(!snakeInit)initSnakeGame();if(!snakeRunning)startSnake();}
     if(id==='ttt'&&!tttInit)tttReset();
+    if(id==='maze'&&!mazeInit)mazeReset();
 }
 
 /* ===== TETRIS ===== */
@@ -203,36 +202,69 @@ function snakeMove(d){if(!snakeRunning)return;if(d==='up'&&dir.y!==1)dir={x:0,y:
 /* ===== TIC TAC TOE ===== */
 let tttBoard,tttTurn,tttInit=false;
 const WINS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-function tttReset(){
-    tttBoard=Array(9).fill('');
-    tttTurn='X';
-    tttInit=true;
-    const el=document.getElementById('ttt-board');
-    el.innerHTML='';
-    for(let i=0;i<9;i++){
-        const c=document.createElement('div');
-        c.className='ttt-cell';
-        c.dataset.idx=i;
-        c.onclick=tttClick;
-        c.ontouchstart=function(e){e.preventDefault();tttClick.call(this);};
-        el.appendChild(c);
-    }
-    document.getElementById('ttt-turn').textContent="X goes first!";
-}
-function tttClick(){
-    const i=parseInt(this.dataset.idx);
-    if(tttBoard[i])return;
-    tttBoard[i]=tttTurn;
-    this.textContent=tttTurn;
-    this.classList.add(tttTurn.toLowerCase());
-    const w=checkWin();
-    if(w){document.getElementById('ttt-turn').textContent=w+' wins! 🎉';disableCells();return;}
-    if(tttBoard.every(c=>c)){document.getElementById('ttt-turn').textContent="It's a draw! 🤝";return;}
-    tttTurn=tttTurn==='X'?'O':'X';
-    document.getElementById('ttt-turn').textContent=tttTurn+"'s turn";
-}
+function tttReset(){tttBoard=Array(9).fill('');tttTurn='X';tttInit=true;const el=document.getElementById('ttt-board');el.innerHTML='';for(let i=0;i<9;i++){const c=document.createElement('div');c.className='ttt-cell';c.dataset.idx=i;c.onclick=tttClick;c.ontouchstart=function(e){e.preventDefault();tttClick.call(this);};el.appendChild(c);}document.getElementById('ttt-turn').textContent="X goes first!";}
+function tttClick(){const i=parseInt(this.dataset.idx);if(tttBoard[i])return;tttBoard[i]=tttTurn;this.textContent=tttTurn;this.classList.add(tttTurn.toLowerCase());const w=checkWin();if(w){document.getElementById('ttt-turn').textContent=w+' wins! 🎉';disableCells();return;}if(tttBoard.every(c=>c)){document.getElementById('ttt-turn').textContent="It's a draw! 🤝";return;}tttTurn=tttTurn==='X'?'O':'X';document.getElementById('ttt-turn').textContent=tttTurn+"'s turn";}
 function checkWin(){for(const[a,b,c]of WINS){if(tttBoard[a]&&tttBoard[a]===tttBoard[b]&&tttBoard[a]===tttBoard[c])return tttBoard[a];}return null;}
 function disableCells(){document.querySelectorAll('.ttt-cell').forEach(c=>c.onclick=null);}
+
+/* ===== MAZE ===== */
+let mazeGrid,mazeW,mazeH,mazePX,mazePY,mazeCS,mazeInit=false,mazeWon=false;
+const MW=10,MH=10;
+function mazeReset(){
+    mazeW=MW;mazeH=MH;
+    const canvas=document.getElementById('maze-canvas');
+    const cs=Math.min(300,mazeW*30);mazeCS=Math.floor(cs/mazeW);
+    canvas.width=mazeW*mazeCS;canvas.height=mazeH*mazeCS;
+    // generate maze using recursive backtracker
+    mazeGrid=[];
+    for(let y=0;y<mazeH;y++){mazeGrid[y]=[];for(let x=0;x<mazeW;x++)mazeGrid[y][x]={top:true,right:true,bottom:true,left:true,visited:false};}
+    const stack=[];let cx=0,cy=0;mazeGrid[cy][cx].visited=true;
+    function neighbors(x,y){const n=[];if(y>0&&!mazeGrid[y-1][x].visited)n.push({x,y:y-1,d:'top'});if(x<mazeW-1&&!mazeGrid[y][x+1].visited)n.push({x:x+1,y,d:'right'});if(y<mazeH-1&&!mazeGrid[y+1][x].visited)n.push({x,y:y+1,d:'bottom'});if(x>0&&!mazeGrid[y][x-1].visited)n.push({x:x-1,y,d:'left'});return n;}
+    while(true){
+        const nb=neighbors(cx,cy);
+        if(nb.length){const next=nb[Math.floor(Math.random()*nb.length)];stack.push({x:cx,y:cy});
+            if(next.d==='top'){mazeGrid[cy][cx].top=false;mazeGrid[next.y][next.x].bottom=false;}
+            else if(next.d==='right'){mazeGrid[cy][cx].right=false;mazeGrid[next.y][next.x].left=false;}
+            else if(next.d==='bottom'){mazeGrid[cy][cx].bottom=false;mazeGrid[next.y][next.x].top=false;}
+            else if(next.d==='left'){mazeGrid[cy][cx].left=false;mazeGrid[next.y][next.x].right=false;}
+            cx=next.x;cy=next.y;mazeGrid[cy][cx].visited=true;
+        }else if(stack.length){const p=stack.pop();cx=p.x;cy=p.y;}else break;
+    }
+    mazePX=0;mazePY=0;mazeWon=false;mazeInit=true;
+    document.getElementById('maze-info').textContent='Find the exit! 🏁';
+    drawMaze();
+}
+function drawMaze(){
+    const canvas=document.getElementById('maze-canvas');const ctx=canvas.getContext('2d');
+    const cs=mazeCS;
+    ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
+    // draw exit
+    ctx.fillStyle='#00f060';ctx.fillRect((mazeW-1)*cs+2,(mazeH-1)*cs+2,cs-4,cs-4);
+    // draw player
+    ctx.fillStyle='#f00060';
+    ctx.beginPath();ctx.arc(mazePX*cs+cs/2,mazePY*cs+cs/2,cs/3,0,Math.PI*2);ctx.fill();
+    // draw walls
+    ctx.strokeStyle='#aaa';ctx.lineWidth=2;
+    for(let y=0;y<mazeH;y++)for(let x=0;x<mazeW;x++){
+        const c=mazeGrid[y][x],px=x*cs,py=y*cs;
+        if(c.top){ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+cs,py);ctx.stroke();}
+        if(c.right){ctx.beginPath();ctx.moveTo(px+cs,py);ctx.lineTo(px+cs,py+cs);ctx.stroke();}
+        if(c.bottom){ctx.beginPath();ctx.moveTo(px,py+cs);ctx.lineTo(px+cs,py+cs);ctx.stroke();}
+        if(c.left){ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+cs);ctx.stroke();}
+    }
+}
+function mazeMove(dx,dy){
+    if(!mazeInit||mazeWon)return;
+    const cell=mazeGrid[mazePY][mazePX];
+    if(dx===1&&cell.right)return;if(dx===-1&&cell.left)return;
+    if(dy===1&&cell.bottom)return;if(dy===-1&&cell.top)return;
+    mazePX+=dx;mazePY+=dy;
+    drawMaze();
+    if(mazePX===mazeW-1&&mazePY===mazeH-1){
+        mazeWon=true;
+        document.getElementById('maze-info').textContent='You made it! 🎉 New maze?';
+    }
+}
 
 /* Keyboard */
 document.addEventListener('keydown',e=>{
@@ -242,6 +274,8 @@ document.addEventListener('keydown',e=>{
         if(e.key==='ArrowUp')snakeMove('up');else if(e.key==='ArrowDown')snakeMove('down');else if(e.key==='ArrowLeft')snakeMove('left');else if(e.key==='ArrowRight')snakeMove('right');else return;e.preventDefault();
     }else if(active&&active.id==='page-tetris'){
         if(!tetrisRunning)return;if(e.key==='ArrowLeft')doMove('left');else if(e.key==='ArrowRight')doMove('right');else if(e.key==='ArrowDown')doMove('down');else if(e.key==='ArrowUp')doMove('up');else return;e.preventDefault();
+    }else if(active&&active.id==='page-maze'){
+        if(e.key==='ArrowUp')mazeMove(0,-1);else if(e.key==='ArrowDown')mazeMove(0,1);else if(e.key==='ArrowLeft')mazeMove(-1,0);else if(e.key==='ArrowRight')mazeMove(1,0);else return;e.preventDefault();
     }
 });
 </script>
