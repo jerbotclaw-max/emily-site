@@ -3,20 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emily's Site</title>
+    <title>Emily's Site ✨</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 700px;
-            margin: 60px auto;
-            padding: 0 20px;
+            margin: 0 auto;
+            padding: 20px;
             background: #fafafa;
             color: #333;
         }
-        h1 { font-size: 2.5em; margin-bottom: 0.2em; }
-        .subtitle { color: #888; font-size: 1.1em; margin-bottom: 2em; }
+        h1 { font-size: 2.5em; margin-bottom: 0.2em; text-align: center; }
+        .subtitle { color: #888; font-size: 1.1em; margin-bottom: 2em; text-align: center; }
+        .nav { display: flex; justify-content: center; gap: 12px; margin-bottom: 2em; }
+        .nav a {
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: #f0e6ff;
+            color: #6b3fa0;
+            font-weight: 500;
+        }
+        .nav a:hover { background: #e0d0f5; }
         .section { margin-bottom: 2em; }
-        .section h2 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+        .section h2 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-bottom: 0.8em; }
         .music-tags { display: flex; flex-wrap: wrap; gap: 8px; }
         .tag {
             background: #f0e6ff;
@@ -25,31 +36,85 @@
             border-radius: 20px;
             font-size: 0.9em;
         }
-        footer { margin-top: 3em; color: #aaa; font-size: 0.85em; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .tetris-wrap { text-align: center; }
+        .tetris-board {
+            display: inline-grid;
+            grid-template-columns: repeat(10, 28px);
+            grid-template-rows: repeat(20, 28px);
+            gap: 1px;
+            background: #222;
+            border: 2px solid #444;
+            border-radius: 4px;
+        }
+        .tetris-board .cell { width: 28px; height: 28px; background: #111; }
+        .tetris-info { margin-top: 12px; font-size: 1.1em; }
+        .tetris-info span { font-weight: bold; }
+        .tetris-btn {
+            margin-top: 10px; padding: 10px 30px; font-size: 1em;
+            border: none; border-radius: 20px; background: #6b3fa0; color: white; cursor: pointer;
+        }
+        .tetris-btn:hover { background: #8a5fc0; }
+        .controls-hint { margin-top: 8px; color: #888; font-size: 0.85em; }
+        footer { margin-top: 3em; color: #aaa; font-size: 0.85em; text-align: center; }
     </style>
 </head>
 <body>
     <h1>Hey, I'm Emily ✨</h1>
     <p class="subtitle">Welcome to my corner of the internet</p>
-
-    <div class="section">
-        <h2>About Me</h2>
-        <p>This is my website. More coming soon!</p>
+    <div class="nav">
+        <a href="#" onclick="showPage('home')">Home</a>
+        <a href="#" onclick="showPage('tetris')">🎮 Tetris</a>
     </div>
 
-    <div class="section">
-        <h2>Music I Love 🎵</h2>
-        <div class="music-tags">
-            <span class="tag">Taylor Swift</span>
-            <span class="tag">Olivia Rodrigo</span>
-            <span class="tag">Ariana Grande</span>
-            <span class="tag">Sabrina Carpenter</span>
+    <div id="page-home" class="page active">
+        <div class="section">
+            <h2>About Me</h2>
+            <p>This is my website. More coming soon!</p>
         </div>
-        <p style="margin-top: 1em; color: #888; font-style: italic;">all the pop girlies</p>
+        <div class="section">
+            <h2>Music I Love 🎵</h2>
+            <div class="music-tags">
+                <span class="tag">Taylor Swift</span>
+                <span class="tag">Olivia Rodrigo</span>
+                <span class="tag">Ariana Grande</span>
+                <span class="tag">Sabrina Carpenter</span>
+            </div>
+            <p style="margin-top:1em;color:#888;font-style:italic;">all the pop girlies</p>
+        </div>
     </div>
 
-    <footer>
-        Built with 💜 by Emily
-    </footer>
+    <div id="page-tetris" class="page">
+        <div class="tetris-wrap">
+            <div class="tetris-board" id="board"></div>
+            <div class="tetris-info">Score: <span id="score">0</span></div>
+            <button class="tetris-btn" id="startBtn" onclick="startGame()">Play</button>
+            <div class="controls-hint">Arrow keys to move &amp; rotate · Down to drop</div>
+        </div>
+    </div>
+
+    <footer>Built with 💜 by Emily</footer>
+
+<script>
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(id==='tetris'&&!gameRunning)startGame();}
+const COLS=10,ROWS=20;
+const SHAPES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]]];
+const COLORS=['#00f0f0','#f0f000','#a000f0','#0000f0','#f0a000','#00f000','#f00000'];
+let board,piece,px,py,pi,score,interval,gameRunning=false;
+function init(){const el=document.getElementById('board');el.innerHTML='';for(let i=0;i<ROWS*COLS;i++){const c=document.createElement('div');c.className='cell';el.appendChild(c);}}
+init();
+function draw(){const cells=document.querySelectorAll('#board .cell');cells.forEach(c=>c.style.background='#111');for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(board[r][c])cells[r*COLS+c].style.background=board[r][c];if(piece){for(let r=0;r<piece.length;r++)for(let c=0;c<piece[r].length;c++)if(piece[r][c]){const y=py+r,x=px+c;if(y>=0&&y<ROWS&&x>=0&&x<COLS)cells[y*COLS+x].style.background=COLORS[pi];}}}
+function collides(p,ox,oy){for(let r=0;r<p.length;r++)for(let c=0;c<p[r].length;c++)if(p[r][c]){const ny=oy+r,nx=ox+c;if(nx<0||nx>=COLS||ny>=ROWS)return true;if(ny>=0&&board[ny][nx])return true;}return false;}
+function rotate(p){const rows=p.length,cols=p[0].length;const r=Array.from({length:cols},()=>Array(rows).fill(0));for(let i=0;i<rows;i++)for(let j=0;j<cols;j++)r[j][rows-1-i]=p[i][j];return r;}
+function lock(){for(let r=0;r<piece.length;r++)for(let c=0;c<piece[r].length;c++)if(piece[r][c]){const y=py+r;if(y<0){gameOver();return;}board[y][px+c]=COLORS[pi];}clearLines();spawn();}
+function clearLines(){let cl=0;for(let r=ROWS-1;r>=0;r--){if(board[r].every(c=>c)){board.splice(r,1);board.unshift(Array(COLS).fill(0));cl++;r++;}}if(cl)score+=[0,100,300,500,800][cl];document.getElementById('score').textContent=score;}
+function spawn(){pi=Math.floor(Math.random()*SHAPES.length);piece=SHAPES[pi].map(r=>[...r]);px=Math.floor((COLS-piece[0].length)/2);py=0;if(collides(piece,px,py))gameOver();}
+function gameOver(){clearInterval(interval);gameRunning=false;document.getElementById('startBtn').textContent='Play Again';}
+function tick(){if(!collides(piece,px,py+1))py++;else lock();draw();}
+function startGame(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));score=0;document.getElementById('score').textContent='0';document.getElementById('startBtn').textContent='Restart';gameRunning=true;spawn();draw();clearInterval(interval);interval=setInterval(tick,500);}
+document.addEventListener('keydown',e=>{if(!gameRunning)return;if(e.key==='ArrowLeft'){if(!collides(piece,px-1,py))px--;}else if(e.key==='ArrowRight'){if(!collides(piece,px+1,py))px++;}else if(e.key==='ArrowDown'){if(!collides(piece,px,py+1))py++;}else if(e.key==='ArrowUp'){const r=rotate(piece);if(!collides(r,px,py))piece=r;}else return;e.preventDefault();draw();});
+</script>
 </body>
 </html>
