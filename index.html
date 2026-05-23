@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Emily's Site ✨</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,6 +13,8 @@
             padding: 20px;
             background: #fafafa;
             color: #333;
+            -webkit-user-select: none;
+            user-select: none;
         }
         h1 { font-size: 2.5em; margin-bottom: 0.2em; text-align: center; }
         .subtitle { color: #888; font-size: 1.1em; margin-bottom: 2em; text-align: center; }
@@ -42,14 +44,14 @@
         .tetris-wrap { text-align: center; }
         .tetris-board {
             display: inline-grid;
-            grid-template-columns: repeat(10, 28px);
-            grid-template-rows: repeat(20, 28px);
+            grid-template-columns: repeat(10, 24px);
+            grid-template-rows: repeat(20, 24px);
             gap: 1px;
             background: #222;
             border: 2px solid #444;
             border-radius: 4px;
         }
-        .tetris-board .cell { width: 28px; height: 28px; background: #111; }
+        .tetris-board .cell { width: 24px; height: 24px; background: #111; }
         .tetris-info { margin-top: 12px; font-size: 1.1em; }
         .tetris-info span { font-weight: bold; }
         .tetris-btn {
@@ -58,6 +60,34 @@
         }
         .tetris-btn:hover { background: #8a5fc0; }
         .controls-hint { margin-top: 8px; color: #888; font-size: 0.85em; }
+        .touch-controls {
+            margin-top: 16px;
+            display: grid;
+            grid-template-areas:
+                ". up ."
+                "left down right";
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 56px 56px;
+            gap: 6px;
+            justify-content: center;
+        }
+        .touch-btn {
+            font-size: 1.6em;
+            border: none;
+            border-radius: 14px;
+            background: #6b3fa0;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .touch-btn:active { background: #8a5fc0; }
+        .touch-btn.up { grid-area: up; }
+        .touch-btn.left { grid-area: left; }
+        .touch-btn.down { grid-area: down; }
+        .touch-btn.right { grid-area: right; }
         footer { margin-top: 3em; color: #aaa; font-size: 0.85em; text-align: center; }
     </style>
 </head>
@@ -91,7 +121,12 @@
             <div class="tetris-board" id="board"></div>
             <div class="tetris-info">Score: <span id="score">0</span></div>
             <button class="tetris-btn" id="startBtn" onclick="startGame()">Play</button>
-            <div class="controls-hint">Arrow keys to move &amp; rotate · Down to drop</div>
+            <div class="touch-controls">
+                <button class="touch-btn up" ontouchstart="doMove('up');event.preventDefault();">↻</button>
+                <button class="touch-btn left" ontouchstart="doMove('left');event.preventDefault();">←</button>
+                <button class="touch-btn down" ontouchstart="doMove('down');event.preventDefault();">↓</button>
+                <button class="touch-btn right" ontouchstart="doMove('right');event.preventDefault();">→</button>
+            </div>
         </div>
     </div>
 
@@ -114,7 +149,8 @@ function spawn(){pi=Math.floor(Math.random()*SHAPES.length);piece=SHAPES[pi].map
 function gameOver(){clearInterval(interval);gameRunning=false;document.getElementById('startBtn').textContent='Play Again';}
 function tick(){if(!collides(piece,px,py+1))py++;else lock();draw();}
 function startGame(){board=Array.from({length:ROWS},()=>Array(COLS).fill(0));score=0;document.getElementById('score').textContent='0';document.getElementById('startBtn').textContent='Restart';gameRunning=true;spawn();draw();clearInterval(interval);interval=setInterval(tick,500);}
-document.addEventListener('keydown',e=>{if(!gameRunning)return;if(e.key==='ArrowLeft'){if(!collides(piece,px-1,py))px--;}else if(e.key==='ArrowRight'){if(!collides(piece,px+1,py))px++;}else if(e.key==='ArrowDown'){if(!collides(piece,px,py+1))py++;}else if(e.key==='ArrowUp'){const r=rotate(piece);if(!collides(r,px,py))piece=r;}else return;e.preventDefault();draw();});
+function doMove(dir){if(!gameRunning)return;if(dir==='left'){if(!collides(piece,px-1,py))px--;}else if(dir==='right'){if(!collides(piece,px+1,py))px++;}else if(dir==='down'){if(!collides(piece,px,py+1))py++;}else if(dir==='up'){const r=rotate(piece);if(!collides(r,px,py))piece=r;}draw();}
+document.addEventListener('keydown',e=>{if(!gameRunning)return;if(e.key==='ArrowLeft')doMove('left');else if(e.key==='ArrowRight')doMove('right');else if(e.key==='ArrowDown')doMove('down');else if(e.key==='ArrowUp')doMove('up');else return;e.preventDefault();});
 </script>
 </body>
 </html>
