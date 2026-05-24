@@ -64,6 +64,50 @@
         #maze-canvas { border: 2px solid #444; border-radius: 4px; display: inline-block; }
         .maze-level { font-size: 1.3em; margin-bottom: 8px; }
         .maze-level span { color: #6b3fa0; font-weight: bold; }
+
+        /* UNO */
+        .uno-area { max-width: 400px; margin: 0 auto; text-align: center; }
+        .uno-opponent { margin-bottom: 10px; }
+        .uno-opponent-cards { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+        .uno-card-back {
+            width: 36px; height: 54px; background: #333; border: 2px solid #555;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.6em; color: #888;
+        }
+        .uno-discard {
+            display: flex; align-items: center; justify-content: center; gap: 16px;
+            margin: 16px 0;
+        }
+        .uno-pile {
+            width: 60px; height: 90px; background: #333; border: 2px solid #555;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7em; color: #aaa; cursor: pointer;
+        }
+        .uno-pile:hover { background: #444; }
+        .uno-card {
+            width: 60px; height: 90px; border-radius: 8px; border: 3px solid #fff;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; color: #fff; cursor: pointer; font-size: 1.4em;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .uno-card.wild { background: linear-gradient(135deg, #f00 25%, #00f 25%, #00f 50%, #0f0 50%, #0f0 75%, #ff0 75%); }
+        .uno-card .card-label { font-size: 0.7em; margin-top: 2px; }
+        .uno-hand {
+            display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .uno-hand .uno-card { transition: transform 0.15s; }
+        .uno-hand .uno-card:hover { transform: translateY(-8px); }
+        .uno-hand .uno-card.playable { border-color: #ff0; }
+        .uno-color-pick {
+            display: none; gap: 8px; justify-content: center; margin-top: 12px;
+        }
+        .uno-color-btn {
+            width: 50px; height: 50px; border-radius: 50%; border: 3px solid #fff;
+            cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .uno-color-btn:hover { transform: scale(1.1); }
+
         footer { margin-top: 3em; color: #aaa; font-size: 0.85em; text-align: center; }
     </style>
 </head>
@@ -76,6 +120,7 @@
         <a href="#" onclick="showPage('snake')">🐍 Snake</a>
         <a href="#" onclick="showPage('ttt')">❌ Tic Tac Toe</a>
         <a href="#" onclick="showPage('maze')">🏰 Maze</a>
+        <a href="#" onclick="showPage('uno')">🃏 UNO</a>
     </div>
 
     <div id="page-home" class="page active">
@@ -150,6 +195,28 @@
         </div>
     </div>
 
+    <div id="page-uno" class="page">
+        <div class="uno-area">
+            <div class="uno-opponent">
+                <div id="uno-ai-label" style="margin-bottom:4px;font-weight:bold;">Bot has <span id="uno-ai-count">7</span> cards</div>
+                <div class="uno-opponent-cards" id="uno-ai-hand"></div>
+            </div>
+            <div class="uno-discard">
+                <div class="uno-pile" id="uno-draw" onclick="unoDraw()">DRAW<br>Tap</div>
+                <div id="uno-top"></div>
+            </div>
+            <div id="uno-status" class="game-info">Your turn!</div>
+            <div class="uno-color-pick" id="uno-colors">
+                <div class="uno-color-btn" style="background:#f00" onclick="unoPickColor('red')"></div>
+                <div class="uno-color-btn" style="background:#00f" onclick="unoPickColor('blue')"></div>
+                <div class="uno-color-btn" style="background:#0a0" onclick="unoPickColor('green')"></div>
+                <div class="uno-color-btn" style="background:#fc0" onclick="unoPickColor('yellow')"></div>
+            </div>
+            <div class="uno-hand" id="uno-hand"></div>
+            <button class="game-btn" onclick="unoInit()" style="margin-top:12px;">New Game</button>
+        </div>
+    </div>
+
     <footer>Built with 💜 by Emily</footer>
 
 <script>
@@ -160,6 +227,7 @@ function showPage(id){
     if(id==='snake'){if(!snakeInit)initSnakeGame();if(!snakeRunning)startSnake();}
     if(id==='ttt'&&!tttInit)tttReset();
     if(id==='maze'&&!mazeInit)mazeStartLevel();
+    if(id==='uno'&&!unoInited)unoInit();
 }
 
 /* ===== TETRIS ===== */
@@ -199,13 +267,12 @@ function disableCells(){document.querySelectorAll('.ttt-cell').forEach(c=>c.oncl
 
 /* ===== MAZE ===== */
 let mazeGrid,mazeW,mazeH,mazePX,mazePY,mazeCS,mazeInit=false,mazeWon=false,mazeLevel=1;
-function mazeGetSize(lvl){return 4+lvl*2;} // lvl1=6, lvl2=8, lvl3=10, etc.
+function mazeGetSize(lvl){return 4+lvl*2;}
 function mazeStartLevel(){
     mazeW=mazeH=mazeGetSize(mazeLevel);
     const canvas=document.getElementById('maze-canvas');
     const maxPx=300;mazeCS=Math.floor(maxPx/mazeW);
     canvas.width=mazeW*mazeCS;canvas.height=mazeH*mazeCS;
-    // generate maze
     mazeGrid=[];
     for(let y=0;y<mazeH;y++){mazeGrid[y]=[];for(let x=0;x<mazeW;x++)mazeGrid[y][x]={top:true,right:true,bottom:true,left:true,visited:false};}
     const stack=[];let cx=0,cy=0;mazeGrid[cy][cx].visited=true;
@@ -215,8 +282,7 @@ function mazeStartLevel(){
         if(cx<mazeW-1&&!mazeGrid[cy][cx+1].visited)nb.push({x:cx+1,y:cy,d:'right'});
         if(cy<mazeH-1&&!mazeGrid[cy+1][cx].visited)nb.push({x:cx,y:cy+1,d:'bottom'});
         if(cx>0&&!mazeGrid[cy][cx-1].visited)nb.push({x:cx-1,y:cy,d:'left'});
-        if(nb.length){
-            const next=nb[Math.floor(Math.random()*nb.length)];stack.push({x:cx,y:cy});
+        if(nb.length){const next=nb[Math.floor(Math.random()*nb.length)];stack.push({x:cx,y:cy});
             if(next.d==='top'){mazeGrid[cy][cx].top=false;mazeGrid[next.y][next.x].bottom=false;}
             else if(next.d==='right'){mazeGrid[cy][cx].right=false;mazeGrid[next.y][next.x].left=false;}
             else if(next.d==='bottom'){mazeGrid[cy][cx].bottom=false;mazeGrid[next.y][next.x].top=false;}
@@ -234,12 +300,9 @@ function mazeRestart(){mazeStartLevel();}
 function drawMaze(){
     const canvas=document.getElementById('maze-canvas');const ctx=canvas.getContext('2d');const cs=mazeCS;
     ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
-    // draw trail glow at exit
     ctx.fillStyle='#00f060';ctx.fillRect((mazeW-1)*cs+2,(mazeH-1)*cs+2,cs-4,cs-4);
-    // draw player
     ctx.fillStyle='#f00060';
     ctx.beginPath();ctx.arc(mazePX*cs+cs/2,mazePY*cs+cs/2,cs/3,0,Math.PI*2);ctx.fill();
-    // draw walls
     ctx.strokeStyle='#aaa';ctx.lineWidth=2;
     for(let y=0;y<mazeH;y++)for(let x=0;x<mazeW;x++){
         const c=mazeGrid[y][x],px2=x*cs,py2=y*cs;
@@ -257,13 +320,173 @@ function mazeMove(dx,dy){
     mazePX+=dx;mazePY+=dy;drawMaze();
     if(mazePX===mazeW-1&&mazePY===mazeH-1){
         mazeWon=true;
-        if(mazeLevel<10){
-            document.getElementById('maze-info').textContent='Level '+mazeLevel+' complete! 🎉 Next level...';
-            setTimeout(()=>{mazeLevel++;mazeStartLevel();},1200);
-        }else{
-            document.getElementById('maze-info').textContent='You beat all 10 levels! 🏆';
-        }
+        if(mazeLevel<10){document.getElementById('maze-info').textContent='Level '+mazeLevel+' complete! 🎉';setTimeout(()=>{mazeLevel++;mazeStartLevel();},1200);}
+        else{document.getElementById('maze-info').textContent='You beat all 10 levels! 🏆';}
     }
+}
+
+/* ===== UNO ===== */
+let unoDeck,unoHand,unoAI,unoTopCard,unoColor,unoTurn,unoInited=false,unoOver=false;
+const UNO_COLORS=['red','blue','green','yellow'];
+const COLOR_BG={red:'#e00',blue:'#00a',green:'#0a0',yellow:'#da0'};
+function unoMakeDeck(){
+    const d=[];
+    for(const c of UNO_COLORS){
+        d.push({color:c,value:'0'});
+        for(let n=1;n<=9;n++){d.push({color:c,value:''+n});d.push({color:c,value:''+n});}
+        for(const s of ['skip','reverse','+2']){d.push({color:c,value:s});d.push({color:c,value:s});}
+    }
+    for(let i=0;i<4;i++){d.push({color:'wild',value:'wild'});d.push({color:'wild',value:'+4'});}
+    return d;
+}
+function unoShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function unoCanPlay(card){
+    if(unoOver)return false;
+    if(card.color==='wild')return true;
+    if(card.color===unoColor)return true;
+    if(card.value===unoTopCard.value)return true;
+    return false;
+}
+function unoCardHTML(card,playable,idx){
+    const el=document.createElement('div');
+    el.className='uno-card'+(playable?' playable':'');
+    if(card.color==='wild')el.classList.add('wild');
+    else el.style.background=COLOR_BG[card.color];
+    let label=card.value;
+    if(card.value==='skip')label='⊘';
+    else if(card.value==='reverse')label='⟲';
+    else if(card.value==='+2')label='+2';
+    else if(card.value==='wild')label='W';
+    else if(card.value==='+4')label='+4';
+    el.innerHTML=label;
+    if(playable){
+        el.onclick=()=>unoPlay(idx);
+        el.ontouchstart=(e)=>{e.preventDefault();unoPlay(idx);};
+    }
+    return el;
+}
+function unoRender(){
+    // AI hand
+    const aiEl=document.getElementById('uno-ai-hand');aiEl.innerHTML='';
+    for(let i=0;i<unoAI.length;i++){const c=document.createElement('div');c.className='uno-card-back';c.textContent='UNO';aiEl.appendChild(c);}
+    document.getElementById('uno-ai-count').textContent=unoAI.length;
+    // Top card
+    const topEl=document.getElementById('uno-top');topEl.innerHTML='';
+    const topCard=unoCardHTML(unoTopCard,false,-1);
+    topEl.appendChild(topCard);
+    // Color indicator
+    if(unoColor){
+        const dot=document.createElement('div');
+        dot.style.cssText='width:16px;height:16px;border-radius:50%;margin-top:6px;display:inline-block;background:'+COLOR_BG[unoColor];
+        topEl.appendChild(dot);
+    }
+    // Player hand
+    const handEl=document.getElementById('uno-hand');handEl.innerHTML='';
+    for(let i=0;i<unoHand.length;i++){
+        const p=unoTurn==='player'&&!unoOver&&unoCanPlay(unoHand[i]);
+        handEl.appendChild(unoCardHTML(unoHand[i],p,i));
+    }
+    document.getElementById('uno-status').textContent=unoOver?(unoTurn==='player'?'🎉 You win!':'Bot wins 😤'):(unoTurn==='player'?'Your turn — tap a card or draw':'Bot is thinking...');
+}
+function unoInit(){
+    unoDeck=unoShuffle(unoMakeDeck());
+    unoHand=unoDeck.splice(0,7);
+    unoAI=unoDeck.splice(0,7);
+    unoTopCard=unoDeck.splice(0,1)[0];
+    while(unoTopCard.color==='wild'){unoDeck.push(unoTopCard);unoShuffle(unoDeck);unoTopCard=unoDeck.splice(0,1)[0];}
+    unoColor=unoTopCard.color;
+    unoTurn='player';unoOver=false;unoInited=true;
+    document.getElementById('uno-colors').style.display='none';
+    document.getElementById('uno-draw').style.display='block';
+    unoRender();
+}
+function unoDraw(){
+    if(unoTurn!=='player'||unoOver)return;
+    if(unoDeck.length===0){unoDeck=unoShuffle(unoDeck);/* reshuffle discard would be ideal but keep simple */}
+    unoHand.push(unoDeck.pop());
+    unoTurn='bot';
+    unoRender();
+    setTimeout(unoBotPlay,800);
+}
+function unoPlay(idx){
+    if(unoTurn!=='player'||unoOver)return;
+    const card=unoHand[idx];
+    if(!unoCanPlay(card))return;
+    unoHand.splice(idx,1);
+    if(unoHand.length===0){unoOver=true;unoTurn='player';unoRender();return;}
+    if(card.color==='wild'){
+        unoTopCard=card;
+        document.getElementById('uno-colors').style.display='flex';
+        document.getElementById('uno-draw').style.display='none';
+        unoRender();
+        return;
+    }
+    unoTopCard=card;unoColor=card.color;
+    if(card.value==='+2'){
+        for(let i=0;i<2;i++)if(unoDeck.length)unoAI.push(unoDeck.pop());
+        // bot skips
+        unoRender();setTimeout(unoBotPlay,800);return;
+    }
+    if(card.value==='skip'||card.value==='reverse'){
+        // bot skips (2 player)
+        unoRender();setTimeout(unoBotPlay,800);return;
+    }
+    unoTurn='bot';
+    unoRender();
+    setTimeout(unoBotPlay,800);
+}
+function unoPickColor(c){
+    document.getElementById('uno-colors').style.display='none';
+    document.getElementById('uno-draw').style.display='block';
+    unoColor=c;
+    if(unoTopCard.value==='+4'){
+        for(let i=0;i<4;i++)if(unoDeck.length)unoAI.push(unoDeck.pop());
+        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
+    }
+    unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);
+}
+function unoBotPlay(){
+    if(unoOver)return;
+    // Find playable card
+    let playable=[];
+    for(let i=0;i<unoAI.length;i++){if(unoCanPlay(unoAI[i]))playable.push(i);}
+    if(playable.length===0){
+        // draw
+        if(unoDeck.length)unoAI.push(unoDeck.pop());
+        unoTurn='player';unoRender();return;
+    }
+    // Pick best: prefer non-wild, prefer action cards
+    playable.sort((a,b)=>{
+        const ca=unoAI[a],cb=unoAI[b];
+        if(ca.color!=='wild'&&cb.color==='wild')return -1;
+        if(cb.color!=='wild'&&ca.color==='wild')return 1;
+        return 0;
+    });
+    const idx=playable[0];
+    const card=unoAI.splice(idx,1)[0];
+    if(unoAI.length===0){unoOver=true;unoTurn='bot';unoRender();return;}
+    unoTopCard=card;
+    if(card.color==='wild'){
+        // Pick most common color in bot hand
+        const counts={red:0,blue:0,green:0,yellow:0};
+        for(const c of unoAI)if(c.color!=='wild')counts[c.color]++;
+        unoColor=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+    }else{
+        unoColor=card.color;
+    }
+    if(card.value==='+2'){
+        for(let i=0;i<2;i++)if(unoDeck.length)unoHand.push(unoDeck.pop());
+        // player skips, bot goes again
+        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
+    }
+    if(card.value==='skip'||card.value==='reverse'){
+        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
+    }
+    if(card.value==='+4'){
+        for(let i=0;i<4;i++)if(unoDeck.length)unoHand.push(unoDeck.pop());
+        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
+    }
+    unoTurn='player';unoRender();
 }
 
 /* Keyboard */
