@@ -166,7 +166,8 @@
         </div>
     </div>
 
-    <footer>Built with 💜 by Emily</footer>
+    <div style="text-align:center;margin-top:2em"><button id="like-btn" onclick="doLike()" style="font-size:1.5em;border:none;background:none;cursor:pointer">💜</button><div id="like-count" style="font-size:0.9em;color:#888">0 likes</div></div>
+<footer>Built with 💜 by Emily</footer>
 
 <script>
 function showPage(id){
@@ -337,6 +338,11 @@ document.addEventListener('keydown',e=>{
     else if(active.id==='page-tetris'){if(!tetrisRunning)return;if(e.key==='ArrowLeft')doMove('left');else if(e.key==='ArrowRight')doMove('right');else if(e.key==='ArrowDown')doMove('down');else if(e.key==='ArrowUp')doMove('up');else return;e.preventDefault();}
     else if(active.id==='page-maze'){if(e.key==='ArrowUp')mazeMove(0,-1);else if(e.key==='ArrowDown')mazeMove(0,1);else if(e.key==='ArrowLeft')mazeMove(-1,0);else if(e.key==='ArrowRight')mazeMove(1,0);else return;e.preventDefault();}
 });
+let likeCount=parseInt(localStorage.getItem("emily-likes")||"0");
+let liked=localStorage.getItem("emily-liked")==="1";
+function updateLikeUI(){document.getElementById("like-count").textContent=likeCount+" likes";document.getElementById("like-btn").textContent=liked?"❤️":"💜";}
+function doLike(){if(liked){liked=false;likeCount=Math.max(0,likeCount-1);localStorage.setItem("emily-liked","0");}else{liked=true;likeCount++;localStorage.setItem("emily-liked","1");}localStorage.setItem("emily-likes",""+likeCount);updateLikeUI();}
+updateLikeUI();
 </script>
 </body>
 </html>
