@@ -5,110 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Emily's Site ✨</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 700px; margin: 0 auto; padding: 20px;
-            background: #fafafa; color: #333;
-            -webkit-user-select: none; user-select: none;
-        }
-        h1 { font-size: 2.5em; margin-bottom: 0.2em; text-align: center; }
-        .subtitle { color: #888; font-size: 1.1em; margin-bottom: 2em; text-align: center; }
-        .nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 2em; flex-wrap: wrap; }
-        .nav a {
-            text-decoration: none; padding: 8px 18px; border-radius: 20px;
-            background: #f0e6ff; color: #6b3fa0; font-weight: 500; font-size: 0.95em;
-        }
-        .nav a:hover { background: #e0d0f5; }
-        .section { margin-bottom: 2em; }
-        .section h2 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-bottom: 0.8em; }
-        .music-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-        .tag { background: #f0e6ff; color: #6b3fa0; padding: 6px 14px; border-radius: 20px; font-size: 0.9em; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .game-wrap { text-align: center; }
-        .game-board { display: inline-grid; gap: 1px; background: #222; border: 2px solid #444; border-radius: 4px; }
-        .game-board .cell { background: #111; }
-        .game-info { margin-top: 12px; font-size: 1.1em; }
-        .game-info span { font-weight: bold; }
-        .game-btn {
-            margin-top: 10px; padding: 10px 30px; font-size: 1em;
-            border: none; border-radius: 20px; background: #6b3fa0; color: white; cursor: pointer;
-        }
-        .game-btn:hover { background: #8a5fc0; }
-        .touch-controls {
-            margin-top: 16px; display: grid;
-            grid-template-areas: ". up ." "left down right";
-            grid-template-columns: 60px 60px 60px; grid-template-rows: 56px 56px;
-            gap: 6px; justify-content: center;
-        }
-        .touch-btn {
-            font-size: 1.6em; border: none; border-radius: 14px;
-            background: #6b3fa0; color: white; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .touch-btn:active { background: #8a5fc0; }
-        .touch-btn.up { grid-area: up; } .touch-btn.left { grid-area: left; }
-        .touch-btn.down { grid-area: down; } .touch-btn.right { grid-area: right; }
-        .ttt-board { display: inline-grid; grid-template-columns: repeat(3,80px); grid-template-rows: repeat(3,80px); gap: 6px; }
-        .ttt-cell {
-            width: 80px; height: 80px; background: #fff; border: 2px solid #ddd;
-            border-radius: 12px; font-size: 2.5em; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; color: #6b3fa0;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .ttt-cell:hover { background: #f5f0ff; }
-        .ttt-cell.x { color: #f00060; } .ttt-cell.o { color: #00b8b8; }
-        .ttt-turn { margin-top: 12px; font-size: 1.2em; }
-        #maze-canvas { border: 2px solid #444; border-radius: 4px; display: inline-block; }
-        .maze-level { font-size: 1.3em; margin-bottom: 8px; }
-        .maze-level span { color: #6b3fa0; font-weight: bold; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:700px;margin:0 auto;padding:20px;background:#fafafa;color:#333;-webkit-user-select:none;user-select:none}
+        h1{font-size:2.5em;margin-bottom:.2em;text-align:center}
+        .subtitle{color:#888;font-size:1.1em;margin-bottom:2em;text-align:center}
+        .nav{display:flex;justify-content:center;gap:10px;margin-bottom:2em;flex-wrap:wrap}
+        .nav a{text-decoration:none;padding:8px 18px;border-radius:20px;background:#f0e6ff;color:#6b3fa0;font-weight:500;font-size:.95em}
+        .nav a:hover{background:#e0d0f5}
+        .section{margin-bottom:2em}
+        .section h2{border-bottom:2px solid #eee;padding-bottom:.3em;margin-bottom:.8em}
+        .music-tags{display:flex;flex-wrap:wrap;gap:8px}
+        .tag{background:#f0e6ff;color:#6b3fa0;padding:6px 14px;border-radius:20px;font-size:.9em}
+        .page{display:none}.page.active{display:block}
+        .game-wrap{text-align:center}
+        .game-board{display:inline-grid;gap:1px;background:#222;border:2px solid #444;border-radius:4px}
+        .game-board .cell{background:#111}
+        .game-info{margin-top:12px;font-size:1.1em}.game-info span{font-weight:bold}
+        .game-btn{margin-top:10px;padding:10px 30px;font-size:1em;border:none;border-radius:20px;background:#6b3fa0;color:#fff;cursor:pointer}
+        .game-btn:hover{background:#8a5fc0}
+        .touch-controls{margin-top:16px;display:grid;grid-template-areas:". up ." "left down right";grid-template-columns:60px 60px 60px;grid-template-rows:56px 56px;gap:6px;justify-content:center}
+        .touch-btn{font-size:1.6em;border:none;border-radius:14px;background:#6b3fa0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+        .touch-btn:active{background:#8a5fc0}
+        .touch-btn.up{grid-area:up}.touch-btn.left{grid-area:left}.touch-btn.down{grid-area:down}.touch-btn.right{grid-area:right}
+        .ttt-board{display:inline-grid;grid-template-columns:repeat(3,80px);grid-template-rows:repeat(3,80px);gap:6px}
+        .ttt-cell{width:80px;height:80px;background:#fff;border:2px solid #ddd;border-radius:12px;font-size:2.5em;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6b3fa0;-webkit-tap-highlight-color:transparent}
+        .ttt-cell:hover{background:#f5f0ff}
+        .ttt-cell.x{color:#f00060}.ttt-cell.o{color:#00b8b8}
+        .ttt-turn{margin-top:12px;font-size:1.2em}
+        #maze-canvas{border:2px solid #444;border-radius:4px;display:inline-block}
+        .maze-level{font-size:1.3em;margin-bottom:8px}.maze-level span{color:#6b3fa0;font-weight:bold}
 
-        /* UNO */
-        .uno-area { max-width: 400px; margin: 0 auto; text-align: center; }
-        .uno-opponent { margin-bottom: 10px; }
-        .uno-opponent-cards { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
-        .uno-card-back {
-            width: 36px; height: 54px; background: #333; border: 2px solid #555;
-            border-radius: 6px; display: flex; align-items: center; justify-content: center;
-            font-size: 0.6em; color: #888;
-        }
-        .uno-discard {
-            display: flex; align-items: center; justify-content: center; gap: 16px;
-            margin: 16px 0;
-        }
-        .uno-pile {
-            width: 60px; height: 90px; background: #333; border: 2px solid #555;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            font-size: 0.7em; color: #aaa; cursor: pointer;
-        }
-        .uno-pile:hover { background: #444; }
-        .uno-card {
-            width: 60px; height: 90px; border-radius: 8px; border: 3px solid #fff;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-weight: bold; color: #fff; cursor: pointer; font-size: 1.4em;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        .uno-card.wild { background: linear-gradient(135deg, #f00 25%, #00f 25%, #00f 50%, #0f0 50%, #0f0 75%, #ff0 75%); }
-        .uno-card .card-label { font-size: 0.7em; margin-top: 2px; }
-        .uno-hand {
-            display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
-            margin-top: 12px;
-        }
-        .uno-hand .uno-card { transition: transform 0.15s; }
-        .uno-hand .uno-card:hover { transform: translateY(-8px); }
-        .uno-hand .uno-card.playable { border-color: #ff0; }
-        .uno-color-pick {
-            display: none; gap: 8px; justify-content: center; margin-top: 12px;
-        }
-        .uno-color-btn {
-            width: 50px; height: 50px; border-radius: 50%; border: 3px solid #fff;
-            cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        .uno-color-btn:hover { transform: scale(1.1); }
-
-        footer { margin-top: 3em; color: #aaa; font-size: 0.85em; text-align: center; }
+        /* UNO 4 player */
+        .uno-area{max-width:420px;margin:0 auto;text-align:center}
+        .uno-opponents{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+        .uno-opp{text-align:center;min-width:80px}
+        .uno-opp-name{font-size:.85em;font-weight:bold;margin-bottom:4px}
+        .uno-opp-name.active-turn{color:#f00060}
+        .uno-opp-cards{display:flex;gap:2px;justify-content:center;flex-wrap:wrap}
+        .uno-card-back{width:24px;height:36px;background:#333;border:1px solid #555;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.45em;color:#888}
+        .uno-center{display:flex;align-items:center;justify-content:center;gap:16px;margin:12px 0}
+        .uno-pile{width:56px;height:84px;background:#333;border:2px solid #555;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.65em;color:#aaa;cursor:pointer}
+        .uno-pile:hover{background:#444}
+        .uno-pile.hidden{display:none}
+        .uno-card{width:56px;height:84px;border-radius:8px;border:3px solid #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;color:#fff;cursor:pointer;font-size:1.3em;box-shadow:0 2px 6px rgba(0,0,0,.3);text-shadow:1px 1px 2px rgba(0,0,0,.5)}
+        .uno-card.wild{background:linear-gradient(135deg,#f00 25%,#00f 25%,#00f 50%,#0f0 50%,#0f0 75%,#ff0 75%)}
+        .uno-card.small{width:48px;height:72px;font-size:1.1em}
+        .uno-hand{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+        .uno-hand .uno-card{transition:transform .15s}
+        .uno-hand .uno-card:hover{transform:translateY(-6px)}
+        .uno-hand .uno-card.playable{border-color:#ff0}
+        .uno-color-pick{display:none;gap:8px;justify-content:center;margin-top:12px}
+        .uno-color-btn{width:44px;height:44px;border-radius:50%;border:3px solid #fff;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+        .uno-color-btn:hover{transform:scale(1.1)}
+        .uno-direction{font-size:1.5em;margin:4px 0}
+        .uno-status{font-size:1.1em;margin:8px 0;font-weight:bold}
+        footer{margin-top:3em;color:#aaa;font-size:.85em;text-align:center}
     </style>
 </head>
 <body>
@@ -197,20 +148,18 @@
 
     <div id="page-uno" class="page">
         <div class="uno-area">
-            <div class="uno-opponent">
-                <div id="uno-ai-label" style="margin-bottom:4px;font-weight:bold;">Bot has <span id="uno-ai-count">7</span> cards</div>
-                <div class="uno-opponent-cards" id="uno-ai-hand"></div>
-            </div>
-            <div class="uno-discard">
-                <div class="uno-pile" id="uno-draw" onclick="unoDraw()">DRAW<br>Tap</div>
+            <div class="uno-opponents" id="uno-opponents"></div>
+            <div class="uno-direction" id="uno-dir">→</div>
+            <div class="uno-center">
+                <div class="uno-pile" id="uno-draw" onclick="unoDraw()">DRAW</div>
                 <div id="uno-top"></div>
             </div>
-            <div id="uno-status" class="game-info">Your turn!</div>
+            <div class="uno-status" id="uno-status">Your turn!</div>
             <div class="uno-color-pick" id="uno-colors">
-                <div class="uno-color-btn" style="background:#f00" onclick="unoPickColor('red')"></div>
-                <div class="uno-color-btn" style="background:#00f" onclick="unoPickColor('blue')"></div>
+                <div class="uno-color-btn" style="background:#e00" onclick="unoPickColor('red')"></div>
+                <div class="uno-color-btn" style="background:#00a" onclick="unoPickColor('blue')"></div>
                 <div class="uno-color-btn" style="background:#0a0" onclick="unoPickColor('green')"></div>
-                <div class="uno-color-btn" style="background:#fc0" onclick="unoPickColor('yellow')"></div>
+                <div class="uno-color-btn" style="background:#da0" onclick="unoPickColor('yellow')"></div>
             </div>
             <div class="uno-hand" id="uno-hand"></div>
             <button class="game-btn" onclick="unoInit()" style="margin-top:12px;">New Game</button>
@@ -269,245 +218,124 @@ function disableCells(){document.querySelectorAll('.ttt-cell').forEach(c=>c.oncl
 let mazeGrid,mazeW,mazeH,mazePX,mazePY,mazeCS,mazeInit=false,mazeWon=false,mazeLevel=1;
 function mazeGetSize(lvl){return 4+lvl*2;}
 function mazeStartLevel(){
-    mazeW=mazeH=mazeGetSize(mazeLevel);
-    const canvas=document.getElementById('maze-canvas');
-    const maxPx=300;mazeCS=Math.floor(maxPx/mazeW);
-    canvas.width=mazeW*mazeCS;canvas.height=mazeH*mazeCS;
-    mazeGrid=[];
-    for(let y=0;y<mazeH;y++){mazeGrid[y]=[];for(let x=0;x<mazeW;x++)mazeGrid[y][x]={top:true,right:true,bottom:true,left:true,visited:false};}
+    mazeW=mazeH=mazeGetSize(mazeLevel);const canvas=document.getElementById('maze-canvas');const maxPx=300;mazeCS=Math.floor(maxPx/mazeW);canvas.width=mazeW*mazeCS;canvas.height=mazeH*mazeCS;
+    mazeGrid=[];for(let y=0;y<mazeH;y++){mazeGrid[y]=[];for(let x=0;x<mazeW;x++)mazeGrid[y][x]={top:true,right:true,bottom:true,left:true,visited:false};}
     const stack=[];let cx=0,cy=0;mazeGrid[cy][cx].visited=true;
-    while(true){
-        const nb=[];
-        if(cy>0&&!mazeGrid[cy-1][cx].visited)nb.push({x:cx,y:cy-1,d:'top'});
-        if(cx<mazeW-1&&!mazeGrid[cy][cx+1].visited)nb.push({x:cx+1,y:cy,d:'right'});
-        if(cy<mazeH-1&&!mazeGrid[cy+1][cx].visited)nb.push({x:cx,y:cy+1,d:'bottom'});
-        if(cx>0&&!mazeGrid[cy][cx-1].visited)nb.push({x:cx-1,y:cy,d:'left'});
-        if(nb.length){const next=nb[Math.floor(Math.random()*nb.length)];stack.push({x:cx,y:cy});
-            if(next.d==='top'){mazeGrid[cy][cx].top=false;mazeGrid[next.y][next.x].bottom=false;}
-            else if(next.d==='right'){mazeGrid[cy][cx].right=false;mazeGrid[next.y][next.x].left=false;}
-            else if(next.d==='bottom'){mazeGrid[cy][cx].bottom=false;mazeGrid[next.y][next.x].top=false;}
-            else if(next.d==='left'){mazeGrid[cy][cx].left=false;mazeGrid[next.y][next.x].right=false;}
-            cx=next.x;cy=next.y;mazeGrid[cy][cx].visited=true;
-        }else if(stack.length){const p=stack.pop();cx=p.x;cy=p.y;}else break;
-    }
-    mazePX=0;mazePY=0;mazeWon=false;mazeInit=true;
-    document.getElementById('maze-lvl').textContent=mazeLevel;
-    document.getElementById('maze-size').textContent=mazeW+'×'+mazeH;
-    document.getElementById('maze-info').textContent='Find the green exit! 🏁';
-    drawMaze();
+    while(true){const nb=[];if(cy>0&&!mazeGrid[cy-1][cx].visited)nb.push({x:cx,y:cy-1,d:'top'});if(cx<mazeW-1&&!mazeGrid[cy][cx+1].visited)nb.push({x:cx+1,y:cy,d:'right'});if(cy<mazeH-1&&!mazeGrid[cy+1][cx].visited)nb.push({x:cx,y:cy+1,d:'bottom'});if(cx>0&&!mazeGrid[cy][cx-1].visited)nb.push({x:cx-1,y:cy,d:'left'});if(nb.length){const next=nb[Math.floor(Math.random()*nb.length)];stack.push({x:cx,y:cy});if(next.d==='top'){mazeGrid[cy][cx].top=false;mazeGrid[next.y][next.x].bottom=false;}else if(next.d==='right'){mazeGrid[cy][cx].right=false;mazeGrid[next.y][next.x].left=false;}else if(next.d==='bottom'){mazeGrid[cy][cx].bottom=false;mazeGrid[next.y][next.x].top=false;}else if(next.d==='left'){mazeGrid[cy][cx].left=false;mazeGrid[next.y][next.x].right=false;}cx=next.x;cy=next.y;mazeGrid[cy][cx].visited=true;}else if(stack.length){const p=stack.pop();cx=p.x;cy=p.y;}else break;}
+    mazePX=0;mazePY=0;mazeWon=false;mazeInit=true;document.getElementById('maze-lvl').textContent=mazeLevel;document.getElementById('maze-size').textContent=mazeW+'×'+mazeH;document.getElementById('maze-info').textContent='Find the green exit! 🏁';drawMaze();
 }
 function mazeRestart(){mazeStartLevel();}
-function drawMaze(){
-    const canvas=document.getElementById('maze-canvas');const ctx=canvas.getContext('2d');const cs=mazeCS;
-    ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00f060';ctx.fillRect((mazeW-1)*cs+2,(mazeH-1)*cs+2,cs-4,cs-4);
-    ctx.fillStyle='#f00060';
-    ctx.beginPath();ctx.arc(mazePX*cs+cs/2,mazePY*cs+cs/2,cs/3,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#aaa';ctx.lineWidth=2;
-    for(let y=0;y<mazeH;y++)for(let x=0;x<mazeW;x++){
-        const c=mazeGrid[y][x],px2=x*cs,py2=y*cs;
-        if(c.top){ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(px2+cs,py2);ctx.stroke();}
-        if(c.right){ctx.beginPath();ctx.moveTo(px2+cs,py2);ctx.lineTo(px2+cs,py2+cs);ctx.stroke();}
-        if(c.bottom){ctx.beginPath();ctx.moveTo(px2,py2+cs);ctx.lineTo(px2+cs,py2+cs);ctx.stroke();}
-        if(c.left){ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(px2,py2+cs);ctx.stroke();}
-    }
+function drawMaze(){const canvas=document.getElementById('maze-canvas');const ctx=canvas.getContext('2d');const cs=mazeCS;ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#00f060';ctx.fillRect((mazeW-1)*cs+2,(mazeH-1)*cs+2,cs-4,cs-4);ctx.fillStyle='#f00060';ctx.beginPath();ctx.arc(mazePX*cs+cs/2,mazePY*cs+cs/2,cs/3,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#aaa';ctx.lineWidth=2;for(let y=0;y<mazeH;y++)for(let x=0;x<mazeW;x++){const c=mazeGrid[y][x],px2=x*cs,py2=y*cs;if(c.top){ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(px2+cs,py2);ctx.stroke();}if(c.right){ctx.beginPath();ctx.moveTo(px2+cs,py2);ctx.lineTo(px2+cs,py2+cs);ctx.stroke();}if(c.bottom){ctx.beginPath();ctx.moveTo(px2,py2+cs);ctx.lineTo(px2+cs,py2+cs);ctx.stroke();}if(c.left){ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(px2,py2+cs);ctx.stroke();}}
 }
-function mazeMove(dx,dy){
-    if(!mazeInit||mazeWon)return;
-    const cell=mazeGrid[mazePY][mazePX];
-    if(dx===1&&cell.right)return;if(dx===-1&&cell.left)return;
-    if(dy===1&&cell.bottom)return;if(dy===-1&&cell.top)return;
-    mazePX+=dx;mazePY+=dy;drawMaze();
-    if(mazePX===mazeW-1&&mazePY===mazeH-1){
-        mazeWon=true;
-        if(mazeLevel<10){document.getElementById('maze-info').textContent='Level '+mazeLevel+' complete! 🎉';setTimeout(()=>{mazeLevel++;mazeStartLevel();},1200);}
-        else{document.getElementById('maze-info').textContent='You beat all 10 levels! 🏆';}
-    }
-}
+function mazeMove(dx,dy){if(!mazeInit||mazeWon)return;const cell=mazeGrid[mazePY][mazePX];if(dx===1&&cell.right)return;if(dx===-1&&cell.left)return;if(dy===1&&cell.bottom)return;if(dy===-1&&cell.top)return;mazePX+=dx;mazePY+=dy;drawMaze();if(mazePX===mazeW-1&&mazePY===mazeH-1){mazeWon=true;if(mazeLevel<10){document.getElementById('maze-info').textContent='Level '+mazeLevel+' complete! 🎉';setTimeout(()=>{mazeLevel++;mazeStartLevel();},1200);}else{document.getElementById('maze-info').textContent='You beat all 10 levels! 🏆';}}}
 
-/* ===== UNO ===== */
-let unoDeck,unoHand,unoAI,unoTopCard,unoColor,unoTurn,unoInited=false,unoOver=false;
+/* ===== UNO 4 PLAYER ===== */
+const UNO_NAMES=['Emily','Olivia','Aria','Sam'];
 const UNO_COLORS=['red','blue','green','yellow'];
 const COLOR_BG={red:'#e00',blue:'#00a',green:'#0a0',yellow:'#da0'};
-function unoMakeDeck(){
-    const d=[];
-    for(const c of UNO_COLORS){
-        d.push({color:c,value:'0'});
-        for(let n=1;n<=9;n++){d.push({color:c,value:''+n});d.push({color:c,value:''+n});}
-        for(const s of ['skip','reverse','+2']){d.push({color:c,value:s});d.push({color:c,value:s});}
-    }
-    for(let i=0;i<4;i++){d.push({color:'wild',value:'wild'});d.push({color:'wild',value:'+4'});}
-    return d;
-}
-function unoShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function unoCanPlay(card){
-    if(unoOver)return false;
-    if(card.color==='wild')return true;
-    if(card.color===unoColor)return true;
-    if(card.value===unoTopCard.value)return true;
-    return false;
-}
-function unoCardHTML(card,playable,idx){
-    const el=document.createElement('div');
-    el.className='uno-card'+(playable?' playable':'');
-    if(card.color==='wild')el.classList.add('wild');
-    else el.style.background=COLOR_BG[card.color];
-    let label=card.value;
-    if(card.value==='skip')label='⊘';
-    else if(card.value==='reverse')label='⟲';
-    else if(card.value==='+2')label='+2';
-    else if(card.value==='wild')label='W';
-    else if(card.value==='+4')label='+4';
-    el.innerHTML=label;
-    if(playable){
-        el.onclick=()=>unoPlay(idx);
-        el.ontouchstart=(e)=>{e.preventDefault();unoPlay(idx);};
-    }
+let uDeck,uHands,uTop,uColor,uCur,uDir,uOver,uInited=false,uPendingWild=null;
+function uMakeDeck(){const d=[];for(const c of UNO_COLORS){d.push({color:c,value:'0'});for(let n=1;n<=9;n++){d.push({color:c,value:''+n});d.push({color:c,value:''+n});}for(const s of ['skip','reverse','+2']){d.push({color:c,value:s});d.push({color:c,value:s});}}for(let i=0;i<4;i++){d.push({color:'wild',value:'wild'});d.push({color:'wild',value:'+4'});}return d;}
+function uShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function uCanPlay(card){if(uOver)return false;if(card.color==='wild')return true;if(card.color===uColor)return true;if(card.value===uTop.value)return true;return false;}
+function uLabel(v){if(v==='skip')return'⊘';if(v==='reverse')return'⟲';if(v==='+2')return'+2';if(v==='wild')return'W';if(v==='+4')return'+4';return v;}
+function uCardEl(card,playable,idx,small){
+    const el=document.createElement('div');el.className='uno-card'+(small?' small':'')+(playable?' playable':'');
+    if(card.color==='wild')el.classList.add('wild');else el.style.background=COLOR_BG[card.color];
+    el.innerHTML=uLabel(card.value);
+    if(playable){el.onclick=()=>uPlay(idx);el.ontouchstart=(e)=>{e.preventDefault();uPlay(idx);};}
     return el;
 }
-function unoRender(){
-    // AI hand
-    const aiEl=document.getElementById('uno-ai-hand');aiEl.innerHTML='';
-    for(let i=0;i<unoAI.length;i++){const c=document.createElement('div');c.className='uno-card-back';c.textContent='UNO';aiEl.appendChild(c);}
-    document.getElementById('uno-ai-count').textContent=unoAI.length;
+function uNext(){uCur=(uCur+uDir+4)%4;}
+function uRender(){
+    // Opponents
+    const oppEl=document.getElementById('uno-opponents');oppEl.innerHTML='';
+    for(let i=1;i<4;i++){
+        const d=document.createElement('div');d.className='uno-opp';
+        const name=document.createElement('div');name.className='uno-opp-name'+(uCur===i?' active-turn':'');name.textContent=UNO_NAMES[i]+' ('+uHands[i].length+')';d.appendChild(name);
+        const cards=document.createElement('div');cards.className='uno-opp-cards';
+        for(let j=0;j<uHands[i].length;j++){const b=document.createElement('div');b.className='uno-card-back';b.textContent='UNO';cards.appendChild(b);}
+        d.appendChild(cards);oppEl.appendChild(d);
+    }
+    // Direction
+    document.getElementById('uno-dir').textContent=uDir===1?'⬅':'➡';
     // Top card
-    const topEl=document.getElementById('uno-top');topEl.innerHTML='';
-    const topCard=unoCardHTML(unoTopCard,false,-1);
-    topEl.appendChild(topCard);
-    // Color indicator
-    if(unoColor){
-        const dot=document.createElement('div');
-        dot.style.cssText='width:16px;height:16px;border-radius:50%;margin-top:6px;display:inline-block;background:'+COLOR_BG[unoColor];
-        topEl.appendChild(dot);
-    }
-    // Player hand
+    const topEl=document.getElementById('uno-top');topEl.innerHTML='';topEl.appendChild(uCardEl(uTop,false,-1,false));
+    if(uColor){const dot=document.createElement('div');dot.style.cssText='width:14px;height:14px;border-radius:50%;margin:4px auto;background:'+COLOR_BG[uColor];topEl.appendChild(dot);}
+    // Hand
     const handEl=document.getElementById('uno-hand');handEl.innerHTML='';
-    for(let i=0;i<unoHand.length;i++){
-        const p=unoTurn==='player'&&!unoOver&&unoCanPlay(unoHand[i]);
-        handEl.appendChild(unoCardHTML(unoHand[i],p,i));
+    const isMyTurn=uCur===0&&!uOver;
+    for(let i=0;i<uHands[0].length;i++){
+        const p=isMyTurn&&uCanPlay(uHands[0][i]);
+        handEl.appendChild(uCardEl(uHands[0][i],p,i,false));
     }
-    document.getElementById('uno-status').textContent=unoOver?(unoTurn==='player'?'🎉 You win!':'Bot wins 😤'):(unoTurn==='player'?'Your turn — tap a card or draw':'Bot is thinking...');
+    // Status
+    const statusEl=document.getElementById('uno-status');
+    if(uOver){statusEl.textContent=uCur===0?'🎉 You win!':UNO_NAMES[uCur]+' wins!';}
+    else if(uCur===0){statusEl.textContent='Your turn — tap a card or draw';}
+    else{statusEl.textContent=UNO_NAMES[uCur]+' is thinking...';}
+    // Draw pile visibility
+    document.getElementById('uno-draw').style.display=(isMyTurn)?'block':'none';
 }
-function unoInit(){
-    unoDeck=unoShuffle(unoMakeDeck());
-    unoHand=unoDeck.splice(0,7);
-    unoAI=unoDeck.splice(0,7);
-    unoTopCard=unoDeck.splice(0,1)[0];
-    while(unoTopCard.color==='wild'){unoDeck.push(unoTopCard);unoShuffle(unoDeck);unoTopCard=unoDeck.splice(0,1)[0];}
-    unoColor=unoTopCard.color;
-    unoTurn='player';unoOver=false;unoInited=true;
+function uDrawCards(pi,n){for(let i=0;i<n;i++){if(!uDeck.length){uDeck=uShuffle(uMakeDeck());}uHands[pi].push(uDeck.pop());}}
+function uInit(){
+    uDeck=uShuffle(uMakeDeck());uHands=[[],[],[],[]];
+    for(let i=0;i<4;i++)for(let j=0;j<7;j++)uHands[i].push(uDeck.pop());
+    uTop=uDeck.pop();while(uTop.color==='wild'){uDeck.push(uTop);uShuffle(uDeck);uTop=uDeck.pop();}
+    uColor=uTop.color;uCur=0;uDir=1;uOver=false;uInited=true;uPendingWild=null;
     document.getElementById('uno-colors').style.display='none';
-    document.getElementById('uno-draw').style.display='block';
-    unoRender();
+    // Handle first card effects
+    if(uTop.value==='skip'){uCur=1;}
+    else if(uTop.value==='reverse'){uDir=-1;uCur=3;}
+    else if(uTop.value==='+2'){uDrawCards(0,2);uCur=1;}
+    uRender();
 }
-function unoDraw(){
-    if(unoTurn!=='player'||unoOver)return;
-    if(unoDeck.length===0){unoDeck=unoShuffle(unoDeck);/* reshuffle discard would be ideal but keep simple */}
-    unoHand.push(unoDeck.pop());
-    unoTurn='bot';
-    unoRender();
-    setTimeout(unoBotPlay,800);
+function uDraw(){if(uCur!==0||uOver)return;uDrawCards(0,1);uNext();uRender();setTimeout(uBotLoop,700);}
+function uPlay(idx){
+    if(uCur!==0||uOver)return;
+    const card=uHands[0][idx];if(!uCanPlay(card))return;
+    uHands[0].splice(idx,1);
+    if(!uHands[0].length){uOver=true;uTop=card;if(card.color!=='wild')uColor=card.color;uRender();return;}
+    if(card.color==='wild'){uPendingWild=card;uTop=card;document.getElementById('uno-colors').style.display='flex';uRender();return;}
+    uTop=card;uColor=card.color;uApplyEffect(card);
 }
-function unoPlay(idx){
-    if(unoTurn!=='player'||unoOver)return;
-    const card=unoHand[idx];
-    if(!unoCanPlay(card))return;
-    unoHand.splice(idx,1);
-    if(unoHand.length===0){unoOver=true;unoTurn='player';unoRender();return;}
-    if(card.color==='wild'){
-        unoTopCard=card;
-        document.getElementById('uno-colors').style.display='flex';
-        document.getElementById('uno-draw').style.display='none';
-        unoRender();
-        return;
-    }
-    unoTopCard=card;unoColor=card.color;
-    if(card.value==='+2'){
-        for(let i=0;i<2;i++)if(unoDeck.length)unoAI.push(unoDeck.pop());
-        // bot skips
-        unoRender();setTimeout(unoBotPlay,800);return;
-    }
-    if(card.value==='skip'||card.value==='reverse'){
-        // bot skips (2 player)
-        unoRender();setTimeout(unoBotPlay,800);return;
-    }
-    unoTurn='bot';
-    unoRender();
-    setTimeout(unoBotPlay,800);
-}
-function unoPickColor(c){
+function uPickColor(c){
     document.getElementById('uno-colors').style.display='none';
-    document.getElementById('uno-draw').style.display='block';
-    unoColor=c;
-    if(unoTopCard.value==='+4'){
-        for(let i=0;i<4;i++)if(unoDeck.length)unoAI.push(unoDeck.pop());
-        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
-    }
-    unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);
+    uColor=c;if(!uPendingWild)return;
+    const card=uPendingWild;uPendingWild=null;
+    uApplyEffect(card);
 }
-function unoBotPlay(){
-    if(unoOver)return;
-    // Find playable card
-    let playable=[];
-    for(let i=0;i<unoAI.length;i++){if(unoCanPlay(unoAI[i]))playable.push(i);}
-    if(playable.length===0){
-        // draw
-        if(unoDeck.length)unoAI.push(unoDeck.pop());
-        unoTurn='player';unoRender();return;
-    }
-    // Pick best: prefer non-wild, prefer action cards
-    playable.sort((a,b)=>{
-        const ca=unoAI[a],cb=unoAI[b];
-        if(ca.color!=='wild'&&cb.color==='wild')return -1;
-        if(cb.color!=='wild'&&ca.color==='wild')return 1;
-        return 0;
-    });
-    const idx=playable[0];
-    const card=unoAI.splice(idx,1)[0];
-    if(unoAI.length===0){unoOver=true;unoTurn='bot';unoRender();return;}
-    unoTopCard=card;
-    if(card.color==='wild'){
-        // Pick most common color in bot hand
-        const counts={red:0,blue:0,green:0,yellow:0};
-        for(const c of unoAI)if(c.color!=='wild')counts[c.color]++;
-        unoColor=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
-    }else{
-        unoColor=card.color;
-    }
-    if(card.value==='+2'){
-        for(let i=0;i<2;i++)if(unoDeck.length)unoHand.push(unoDeck.pop());
-        // player skips, bot goes again
-        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
-    }
-    if(card.value==='skip'||card.value==='reverse'){
-        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
-    }
-    if(card.value==='+4'){
-        for(let i=0;i<4;i++)if(unoDeck.length)unoHand.push(unoDeck.pop());
-        unoTurn='bot';unoRender();setTimeout(unoBotPlay,800);return;
-    }
-    unoTurn='player';unoRender();
+function uApplyEffect(card){
+    if(card.value==='skip'){uNext();/* skip next */uNext();}
+    else if(card.value==='reverse'){uDir*=-1;uNext();}
+    else if(card.value==='+2'){uNext();uDrawCards(uCur,2);uNext();}
+    else if(card.value==='+4'){uNext();uDrawCards(uCur,4);uNext();}
+    else{uNext();}
+    uRender();
+    if(uCur!==0&&!uOver)setTimeout(uBotLoop,700);
 }
+function uBotLoop(){
+    if(uOver||uCur===0)return;
+    const hand=uHands[uCur];let playable=[];
+    for(let i=0;i<hand.length;i++)if(uCanPlay(hand[i]))playable.push(i);
+    if(!playable.length){uDrawCards(uCur,1);uNext();uRender();if(uCur!==0)setTimeout(uBotLoop,700);return;}
+    // Bot AI: prefer non-wild, prefer action, prefer color match
+    playable.sort((a,b)=>{const ca=hand[a],cb=hand[b];let sa=0,sb=0;if(ca.color==='wild')sa-=10;if(cb.color==='wild')sb-=10;if(ca.value==='+2'||ca.value==='+4'||ca.value==='skip'||ca.value==='reverse')sa+=3;if(cb.value==='+2'||cb.value==='+4'||cb.value==='skip'||cb.value==='reverse')sb+=3;if(ca.color===uColor)sa+=1;if(cb.color===uColor)sb+=1;return sb-sa;});
+    const idx=playable[0];const card=hand.splice(idx,1)[0];
+    if(!hand.length){uOver=true;uTop=card;if(card.color!=='wild')uColor=card.color;uRender();return;}
+    uTop=card;
+    if(card.color==='wild'){const counts={red:0,blue:0,green:0,yellow:0};for(const c of uHands[uCur])if(c.color!=='wild')counts[c.color]++;uColor=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];}
+    else{uColor=card.color;}
+    uApplyEffect(card);
+}
+// aliases for HTML onclick
+var unoInit=uInit,unoDraw=uDraw,unoPickColor=uPickColor;
 
 /* Keyboard */
 document.addEventListener('keydown',e=>{
-    const active=document.querySelector('.page.active');
-    if(!active)return;
-    if(active.id==='page-snake'){
-        if(!snakeRunning)return;
-        if(e.key==='ArrowUp')snakeMove('up');else if(e.key==='ArrowDown')snakeMove('down');
-        else if(e.key==='ArrowLeft')snakeMove('left');else if(e.key==='ArrowRight')snakeMove('right');
-        else return;e.preventDefault();
-    }else if(active.id==='page-tetris'){
-        if(!tetrisRunning)return;
-        if(e.key==='ArrowLeft')doMove('left');else if(e.key==='ArrowRight')doMove('right');
-        else if(e.key==='ArrowDown')doMove('down');else if(e.key==='ArrowUp')doMove('up');
-        else return;e.preventDefault();
-    }else if(active.id==='page-maze'){
-        if(e.key==='ArrowUp')mazeMove(0,-1);else if(e.key==='ArrowDown')mazeMove(0,1);
-        else if(e.key==='ArrowLeft')mazeMove(-1,0);else if(e.key==='ArrowRight')mazeMove(1,0);
-        else return;e.preventDefault();
-    }
+    const active=document.querySelector('.page.active');if(!active)return;
+    if(active.id==='page-snake'){if(!snakeRunning)return;if(e.key==='ArrowUp')snakeMove('up');else if(e.key==='ArrowDown')snakeMove('down');else if(e.key==='ArrowLeft')snakeMove('left');else if(e.key==='ArrowRight')snakeMove('right');else return;e.preventDefault();}
+    else if(active.id==='page-tetris'){if(!tetrisRunning)return;if(e.key==='ArrowLeft')doMove('left');else if(e.key==='ArrowRight')doMove('right');else if(e.key==='ArrowDown')doMove('down');else if(e.key==='ArrowUp')doMove('up');else return;e.preventDefault();}
+    else if(active.id==='page-maze'){if(e.key==='ArrowUp')mazeMove(0,-1);else if(e.key==='ArrowDown')mazeMove(0,1);else if(e.key==='ArrowLeft')mazeMove(-1,0);else if(e.key==='ArrowRight')mazeMove(1,0);else return;e.preventDefault();}
 });
 </script>
 </body>
